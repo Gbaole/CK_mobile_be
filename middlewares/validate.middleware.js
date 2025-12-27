@@ -1,6 +1,6 @@
-const { ZodError } = require("zod");
+import { ZodError } from "zod";
 
-function validateData(schema = {}) {
+export function validateData(schema = {}) {
   return (req, res, next) => {
     try {
       // validate body
@@ -42,5 +42,3 @@ function validateData(schema = {}) {
     }
   };
 }
-
-module.exports = { validateData };

@@ -1,7 +1,7 @@
 // models/Account.js
 import mongoose from "mongoose";
 import bcrypt from "bcrypt";
-import { AccountRole, AccountStatus } from "../enums/user.enum";
+import { AccountRole, AccountStatus } from "../enums/user.enum.js";
 const userSchema = new mongoose.Schema(
   {
     name: {
@@ -12,6 +12,7 @@ const userSchema = new mongoose.Schema(
     avatarURL: {
       type: String,
       required: false,
+      default: null,
       trim: true,
     },
     email: {
@@ -26,6 +27,7 @@ const userSchema = new mongoose.Schema(
       sparse: true,
       trim: true,
       lowercase: true,
+      default: null,
     },
     password: {
       type: String,
@@ -44,19 +46,18 @@ const userSchema = new mongoose.Schema(
   },
   {
     timestamps: true,
-  }
+  },
 );
 
 // Hash password before save
-userSchema.pre("save", async function (next) {
-  if (!this.isModified("password")) return next();
-  this.password = await bcrypt.hash(this.password, 10);
-  next();
+userSchema.pre("save", async function () {
+  if (!this.isModified("password")) return;
+  this.password = bcrypt.hash(this.password, 10);
 });
-
 // Compare password method
 userSchema.methods.comparePassword = function (candidatePassword) {
   return bcrypt.compare(candidatePassword, this.password);
 };
 
-module.exports = mongoose.model("User", userSchema);
+const User = mongoose.models.User || mongoose.model("User", userSchema);
+export default User;

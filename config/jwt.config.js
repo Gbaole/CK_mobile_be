@@ -1,7 +1,7 @@
-const jwt = require("jsonwebtoken");
+import jwt from "jsonwebtoken";
 
-function generateToken(user = {}) {
-  const { _id = "", name = "Guest", email = "", role = "user" } = user;
+export function generateToken(user = {}) {
+  const { _id = "", name = "Guest", email = "", role = "customer" } = user;
 
   if (!process.env.JWT_SECRET) {
     throw new Error("JWT_SECRET chưa được cấu hình");
@@ -17,11 +17,9 @@ function generateToken(user = {}) {
     expiresIn: process.env.JWT_EXPIRES_IN || "30d",
   });
 }
-function decodeToken(token) {
+export function decodeToken(token) {
   return jwt.decode(token);
 }
-function verifyToken(token, secret = process.env.JWT_SECRET) {
+export function verifyToken(token, secret = process.env.JWT_SECRET) {
   return jwt.verify(token, secret);
 }
-
-module.exports = { generateToken, decodeToken, verifyToken };

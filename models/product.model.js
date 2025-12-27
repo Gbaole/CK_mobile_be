@@ -37,7 +37,7 @@ const productSchema = new mongoose.Schema(
 
     discount: {
       type: Number,
-      default: 0, // percent %
+      default: 0,
     },
 
     stock: {
@@ -61,7 +61,6 @@ const productSchema = new mongoose.Schema(
       },
     ],
 
-    // Thông số kỹ thuật
     specs: {
       storage: String,
       color: String,

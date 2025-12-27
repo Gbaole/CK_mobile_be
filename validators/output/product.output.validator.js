@@ -12,9 +12,9 @@ export const ProductInputSchema = z.object({
     errorMap: () => ({ message: "Invalid product type" }),
   }),
 
-  brand: objectIdSchema, // Nhận vào ID của Brand
+  brand: objectIdSchema,
 
-  category: objectIdSchema, // Nhận vào ID của Category
+  category: objectIdSchema,
 
   price: z.number().min(0, "Price must be at least 0"),
 
@@ -28,7 +28,6 @@ export const ProductInputSchema = z.object({
 
   images: z.array(z.string().url("Must be a valid URL")).default([]),
 
-  // Thông số kỹ thuật
   specs: z
     .object({
       storage: z.string().optional(),
@@ -41,5 +40,4 @@ export const ProductInputSchema = z.object({
   sold: z.number().int().min(0).default(0),
 });
 
-// Validator cho lúc cập nhật (cho phép các trường là optional)
 export const UpdateProductSchema = ProductInputSchema.partial();
