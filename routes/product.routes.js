@@ -1,17 +1,26 @@
 import express from "express";
 import productController from "../controllers/product.controller.js";
+import {
+  authenticationMiddleware,
+  authorize,
+} from "../middlewares/auth.middleware.js";
 
 const productRouter = express.Router();
 
 // CRUD cơ bản
-productRouter.post("/", productController.create);
+productRouter.post(
+  "/",
+  authenticationMiddleware,
+  authorize("admin"),
+  productController.create,
+);
 productRouter.get("/", productController.getAll);
 
 productRouter.get("/top-selling", productController.getTopSelling);
 productRouter.get("/new-products", productController.getNewProducts);
 productRouter.get(
   "/category/:categoryId",
-  productController.getProductsByCategory
+  productController.getProductsByCategory,
 );
 
 productRouter.get("/:id", productController.getById);
