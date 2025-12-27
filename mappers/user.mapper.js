@@ -1,0 +1,57 @@
+import { UserSchema } from "../validators/output/user.output.validator.js";
+
+class AccountMapper {
+  /**
+   * Chi tiết thông tin user
+   */
+  static mapToDetail(model) {
+    if (!model) return null;
+
+    // Tạo một Schema tạm thời loại bỏ các trường bạn không muốn lấy
+    const detailSchema = UserSchema.omit({
+      createdAt: true,
+      updatedAt: true,
+      __v: true,
+    });
+
+    return detailSchema.parse({
+      id: model._id.toString(),
+      name: model.name,
+      avatarURL: model.avatarURL,
+      email: model.email,
+      phoneNumber: model.phoneNumber,
+      status: model.status,
+      role: model.role,
+    });
+  }
+
+  /**
+   * Mapper cho kết quả Login
+   */
+  static mapToLoginResponse(model, token) {
+    return {
+      user: this.mapToDetail(model),
+      token: token,
+    };
+  }
+
+  /**
+   * Danh sách người dùng
+   */
+  static mapToListItem(model) {
+    return {
+      id: model._id.toString(),
+      name: model.name,
+      email: model.email,
+      role: model.role,
+      status: model.status,
+      createdAt: model.createdAt.toISOString(),
+    };
+  }
+
+  static mapToList(models) {
+    return models.map((m) => this.mapToListItem(m));
+  }
+}
+
+export default AccountMapper;
