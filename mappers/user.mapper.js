@@ -7,7 +7,6 @@ class AccountMapper {
   static mapToDetail(model) {
     if (!model) return null;
 
-    // Tạo một Schema tạm thời loại bỏ các trường bạn không muốn lấy
     const detailSchema = UserSchema.omit({
       createdAt: true,
       updatedAt: true,
@@ -33,6 +32,27 @@ class AccountMapper {
       user: this.mapToDetail(model),
       token: token,
     };
+  }
+
+  static mapToUpdatedDetail(model) {
+    if (!model) return null;
+
+    const updatedSchema = UserSchema.omit({
+      password: true,
+      __v: true,
+      createdAt: true,
+      updatedAt: true,
+    });
+
+    return updatedSchema.parse({
+      id: model._id.toString(),
+      name: model.name,
+      avatarURL: model.avatarURL,
+      email: model.email,
+      phoneNumber: model.phoneNumber,
+      status: model.status,
+      role: model.role,
+    });
   }
 
   /**
