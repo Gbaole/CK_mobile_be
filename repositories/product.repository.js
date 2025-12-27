@@ -6,6 +6,9 @@ class ProductRepository extends BaseRepository {
     super(Product);
   }
 
+  async getProductById(id) {
+    return await this.findById(id, "brand category");
+  }
   // tìm theo slug
   async findBySlug(slug) {
     return await this.model.findOne({ slug }).populate("brand category").exec();
