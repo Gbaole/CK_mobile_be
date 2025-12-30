@@ -1,4 +1,3 @@
-import { describe } from "zod/mini";
 import { ProductOutputSchema } from "../validators/output/product.output.validator.js";
 
 class ProductMapper {
@@ -30,6 +29,13 @@ class ProductMapper {
       images: model.images || [],
       description: model.description || null,
       createdAt: model.createdAt.toISOString(),
+      specs: model.specs
+        ? {
+            storage: model.specs.storage || null,
+            color: model.specs.color || null,
+            region: model.specs.region || null,
+          }
+        : null,
     };
 
     return ProductOutputSchema.parse(data);

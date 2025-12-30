@@ -1,47 +1,48 @@
 import CartRepository from "../repositories/cart.repository.js";
 import ProductService from "./product.service.js";
 class CartService {
-
   async findCartByUserId(userId) {
     return await CartRepository.findCartByUserId(userId);
   }
 
-async removeProductFormCart(userId, productId) {
-  const cart = await this.findCartByUserId(userId);
-
-  const itemIndex = cart.items.findIndex(
-    (item) => item.productId.toString() === productId.toString()
-  );
-
-  if (itemIndex > -1) {
-    cart.items.splice(itemIndex, 1); 
-  }
-
-  await cart.populate("items.productId");
-  cart.totalPrice = this.#calculateTotalPrice(cart.items);
-
-  return await cart.save();
-}
-  async addProductToCart(userId, productId, quantity) {
-    const product = await ProductService.checkAvailableProductStock(
-      productId,
-      quantity,
-    );
-
+  async removeProductFormCart(userId, productId) {
     const cart = await this.findCartByUserId(userId);
 
     const itemIndex = cart.items.findIndex(
-      (item) => item.productId.toString() === productId.toString(),
+      (item) => item.productId.toString() === productId.toString()
+    );
+
+    if (itemIndex > -1) {
+      cart.items.splice(itemIndex, 1);
+    }
+
+    await cart.populate("items.productId");
+    cart.totalPrice = this.#calculateTotalPrice(cart.items);
+
+    return await cart.save();
+  }
+  async addProductToCart(userId, productId, quantity) {
+    const product = await ProductService.checkAvailableProductStock(
+      productId,
+      quantity
+    );
+    const productPrice = product.price * quantity;
+    const cart = await this.findCartByUserId(userId);
+
+    const itemIndex = cart.items.findIndex(
+      (item) => item.productId.toString() === productId.toString()
     );
 
     if (itemIndex > -1) {
       cart.items[itemIndex].quantity += quantity;
       cart.items[itemIndex].name = product.name;
+      cart.items[itemIndex].price = productPrice;
     } else {
       cart.items.push({
         productId: product,
         quantity,
-        name: product.name
+        price: productPrice,
+        name: product.name,
       });
     }
     await cart.populate("items.productId");
@@ -49,7 +50,7 @@ async removeProductFormCart(userId, productId) {
     return await cart.save();
   }
 
-  async mergeCart(userId, guestItems) { }
+  async mergeCart(userId, guestItems) {}
 
   #recalculateCartTotal(cart) {
     cart.populate("items.product");

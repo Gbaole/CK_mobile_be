@@ -1,6 +1,6 @@
 @host = http://localhost:8000/api/v1
 
-@name = Le Trung Hau
-@email = leetrunghaau@gmail.com
-@password = 12345679
-@token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY5NTM2MzJjNzFiMzBhYzI0ZjU2M2RjNCIsIm5hbWUiOiJMZSBUcnVuZyBIYXUiLCJlbWFpbCI6ImxlZXRydW5naGFhdUBnbWFpbC5jb20iLCJyb2xlIjoiY3VzdG9tZXIiLCJpYXQiOjE3NjcwNzI1OTAsImV4cCI6MTc2OTY2NDU5MH0.z3xvT9dZNwqzIgiksQKK3TTkbGBCI-yWUxOS4WAgy_c
+@name = gia bao
+@email = giabao@gmail.com
+@password = 123456
+@token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY5NTQxMjQ0MDAwZTdjNDY4OGYxODFiNiIsIm5hbWUiOiJnaWEgYmFvIiwiZW1haWwiOiJnaWFiYW9AZ21haWwuY29tIiwicm9sZSI6ImN1c3RvbWVyIiwiaWF0IjoxNzY3MTE5Mjg3LCJleHAiOjE3Njk3MTEyODd9.APD2Tk1vsYcv_mHJcJwkJqnu5yJudcHMpliKlnGucI8

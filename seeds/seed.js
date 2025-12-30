@@ -4,8 +4,12 @@ import dotenv from "dotenv";
 import Brand from "../models/brand.model.js";
 import Category from "../models/category.model.js";
 import Product from "../models/product.model.js";
+import Order from "../models/order.model.js"; // Import thêm Model Order
+import { OrderStatus, PaymentMethod } from "../enums/order.enum.js"; // Đảm bảo đường dẫn này đúng
 
 dotenv.config({ path: ".env" });
+
+const TARGET_USER_ID = "69541244000e7c4688f181b6"; // User nhận đơn hàng giả
 
 const connectDB = async () => {
   try {
@@ -150,41 +154,37 @@ const importData = async () => {
   try {
     await connectDB();
 
-    // 1. Xoá dữ liệu cũ
+    // 1. Xoá dữ liệu cũ (Xoá thêm Order)
     await Brand.deleteMany();
     await Category.deleteMany();
     await Product.deleteMany();
+    await Order.deleteMany({ userId: TARGET_USER_ID });
     console.log("🗑️ Old data cleared");
 
     // 2. Tạo brand & category
     const createdBrands = await Brand.insertMany(brands);
     const createdCategories = await Category.insertMany(categories);
 
-    // 3. Tạo Map để tìm ID nhanh hơn
+    // 3. Tạo Map
     const brandMap = {};
     createdBrands.forEach((b) => (brandMap[b.name] = b._id));
-
     const categoryMap = {};
     createdCategories.forEach((c) => (categoryMap[c.name] = c._id));
 
-    // 4. Gán brand/category thông minh hơn
+    // 4. Gán brand/category cho sản phẩm
     const productsWithRef = products.map((p) => {
       const nameLower = p.name.toLowerCase();
       const descLower = p.description.toLowerCase();
 
-      // Mapping Category
-      let categoryId = categoryMap["Game"]; // Mặc định
+      let categoryId = categoryMap["Game"];
       if (p.type === "console") categoryId = categoryMap["Console"];
       if (p.type === "accessory") categoryId = categoryMap["Accessory"];
 
-      // Mapping Brand dựa trên tên hoặc mô tả
-      let brandId = brandMap["Nintendo"]; // Mặc định
+      let brandId = brandMap["Nintendo"];
       if (
         nameLower.includes("playstation") ||
         nameLower.includes("dualsense") ||
-        descLower.includes("sony") ||
-        descLower.includes("ps5") ||
-        descLower.includes("ps4")
+        descLower.includes("sony")
       ) {
         brandId = brandMap["Sony"];
       } else if (
@@ -202,10 +202,105 @@ const importData = async () => {
       };
     });
 
-    // 5. Lưu vào Database
-    await Product.insertMany(productsWithRef);
+    const createdProducts = await Product.insertMany(productsWithRef);
+    console.log("✅ Products imported");
 
-    console.log("✅ Data imported successfully!");
+    // 5. TẠO FAKE ORDERS CHO USER
+    const fakeOrders = [
+      {
+        userId: TARGET_USER_ID,
+        status: OrderStatus.PROCESSING,
+        shippingAddress: "123 Ly Thuong Kiet, HCM",
+        paymentMethod: PaymentMethod.COD,
+        items: [
+          {
+            productId: createdProducts[0]._id,
+            name: createdProducts[0].name,
+            quantity: 13,
+            price: createdProducts[0].price,
+          },
+          {
+            productId: createdProducts[5]._id,
+            name: createdProducts[5].name,
+            quantity: 10,
+            price: createdProducts[5].price,
+          },
+        ],
+      },
+      {
+        userId: TARGET_USER_ID,
+        status: OrderStatus.DELIVERED,
+        shippingAddress: "74 Pham Hung Q8 HCM",
+        paymentMethod: PaymentMethod.CREDITCARD,
+        items: [
+          {
+            productId: createdProducts[8]._id,
+            name: createdProducts[8].name,
+            quantity: 5,
+            price: createdProducts[8].price,
+          },
+        ],
+      },
+      {
+        userId: TARGET_USER_ID,
+        status: OrderStatus.DELIVERED,
+        shippingAddress: "312 NTMK Q1 HCM",
+        paymentMethod: PaymentMethod.CREDITCARD,
+        items: [
+          {
+            productId: createdProducts[1]._id,
+            name: createdProducts[1].name,
+            quantity: 4,
+            price: createdProducts[1].price,
+          },
+          {
+            productId: createdProducts[2]._id,
+            name: createdProducts[2].name,
+            quantity: 1,
+            price: createdProducts[2].price,
+          },
+        ],
+      },
+      {
+        userId: TARGET_USER_ID,
+        status: OrderStatus.DELIVERED,
+        shippingAddress: "220/123/12 PNT ,P21 Q,PN",
+        paymentMethod: PaymentMethod.CREDITCARD,
+        items: [
+          {
+            productId: createdProducts[9]._id,
+            name: createdProducts[9].name,
+            quantity: 9,
+            price: createdProducts[9].price,
+          },
+          {
+            productId: createdProducts[1]._id,
+            name: createdProducts[1].name,
+            quantity: 1,
+            price: createdProducts[1].price,
+          },
+          {
+            productId: createdProducts[2]._id,
+            name: createdProducts[2].name,
+            quantity: 11,
+            price: createdProducts[2].price,
+          },
+        ],
+      },
+    ];
+
+    // Tính totalPrice cho từng Order
+    const ordersWithTotal = fakeOrders.map((order) => ({
+      ...order,
+      totalPrice: order.items.reduce(
+        (sum, item) => sum + item.price * item.quantity,
+        0
+      ),
+    }));
+
+    await Order.insertMany(ordersWithTotal);
+
+    console.log("✅ Fake orders seeded successfully!");
     process.exit();
   } catch (err) {
     console.error("❌ Error importing data:", err);

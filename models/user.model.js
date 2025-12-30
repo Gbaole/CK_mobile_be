@@ -43,10 +43,14 @@ const userSchema = new mongoose.Schema(
       enum: Object.values(AccountRole),
       default: AccountRole.CUSTOMER,
     },
+    shippingAddress: {
+      type: String,
+      default: null,
+    },
   },
   {
     timestamps: true,
-  },
+  }
 );
 
 // Hash password before save
