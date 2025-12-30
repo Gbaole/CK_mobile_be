@@ -9,7 +9,7 @@ class ProductService {
     if (product.stock < quantity) {
       throw new Error("Số lượng sản phẩm không đủ");
     }
-    return product
+    return product;
   }
 
   async getProductDetail(id) {
@@ -28,7 +28,7 @@ class ProductService {
         sort: { createdAt: -1 },
         limit,
         populate: "brand category",
-      },
+      }
     );
     return ProductMapper.mapToList(products);
   }
@@ -41,7 +41,7 @@ class ProductService {
         sort: { sold: -1 },
         limit,
         populate: "brand category",
-      },
+      }
     );
   }
 
@@ -58,7 +58,7 @@ class ProductService {
         sort: { createdAt: -1 },
         limit,
         populate: "brand category",
-      },
+      }
     );
   }
 }
