@@ -14,7 +14,7 @@ class ProductService {
 
   async getProductDetail(id) {
     const product = await ProductRepository.getProductById(id);
-    console.log(product);
+    // console.log(product);
     if (!product) {
       throw new Error("Sản phẩm không tồn tại");
     }
