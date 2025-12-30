@@ -1,0 +1,5 @@
+# @import ./varInit.http
+
+###
+GET /categories
+

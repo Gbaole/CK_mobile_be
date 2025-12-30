@@ -1,0 +1,33 @@
+# @import ./varInit.http
+
+@productId=69535c3a4daf9847201a0691
+@quantity=2
+
+###
+
+GET {{host}}/cart
+Authorization: Bearer {{token}}
+
+###
+POST {{host}}/cart
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+    "productId": "{{productId}}",
+    "quantity": {{quantity}}
+}   
+
+###
+PATCH {{host}}/cart
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+    "productId": "{{productId}}",
+    "quantity": {{quantity}}
+}
+
+###
+DELETE {{host}}/cart/{{productId}}
+Authorization: Bearer {{token}}

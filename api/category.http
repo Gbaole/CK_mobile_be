@@ -1,0 +1,8 @@
+# @import ./varInit.http
+
+###
+GET {{host}}/categories
+
+###
+# @prompt categoryId
+GET {{host}}/categories/{{categoryId}}/products

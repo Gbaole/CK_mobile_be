@@ -1,0 +1,60 @@
+# @import ./varInit.http
+
+###
+
+# @name createProduct
+# @prompt adminToken, name, type, brand, category, price, stock, description
+POST {{host}}/products
+Authorization: Bearer {{adminToken}}
+Content-Type: application/json
+
+{
+    "name": "{{name}}",
+    "type": "{{type}}",
+    "brand": "{{brand}}",
+    "category": "{{category}}",
+    "price": {{price}},
+    "stock": {{stock}},
+    "description": "{{description}}"
+}
+
+###
+
+# @name getAllProducts
+GET {{host}}/products
+
+###
+
+# @name getTopSelling
+GET {{host}}/products/top-selling
+
+###
+
+# @name getNewProducts
+GET {{host}}/products/new-products
+
+###
+
+# @name getProductById
+# @prompt productId
+GET {{host}}/products/{{productId}}
+
+###
+
+# @name updateProduct
+# @prompt productId, adminToken, price, stock
+PUT {{host}}/products/{{productId}}
+Authorization: Bearer {{adminToken}}
+Content-Type: application/json
+
+{
+    "price": {{price}},
+    "stock": {{stock}}
+}
+
+###
+
+# @name deleteProduct
+# @prompt productId, adminToken
+DELETE {{host}}/products/{{productId}}
+Authorization: Bearer {{adminToken}}

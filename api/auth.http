@@ -1,0 +1,58 @@
+# @import ./varInit.http
+
+
+###
+
+# @name register
+# @prompt name, email, password, phoneNumber
+
+###
+POST {{host}}/auth/register
+Content-Type: application/json
+
+{
+    "name": "{{name}}",
+    "email": "{{email}}",
+    "password": "{{password}}"
+}
+
+###
+
+# @name login
+# @prompt identifier, password
+POST {{host}}/auth/login
+Content-Type: application/json
+
+{
+    "identifier": "{{email}}",
+    "password": "{{password}}"
+}
+
+###
+
+# @name updateProfile
+# @prompt token, name, phoneNumber
+PATCH {{host}}/auth/update-profile
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+    "name": "{{name}}",
+    "phoneNumber": "{{phoneNumber}}"
+}
+
+###
+
+# @name updateAvatar
+# @prompt token
+PATCH {{host}}/auth/update-avatar
+Authorization: Bearer {{token}}
+Content-Type: multipart/form-data; boundary=boundary
+
+--boundary
+Content-Disposition: form-data; name="avatar"; filename="avatar.jpg"
+Content-Type: image/jpeg
+
+< ./avatar.jpg
+
+--boundary--

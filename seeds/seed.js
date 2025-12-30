@@ -12,12 +12,11 @@ const connectDB = async () => {
     await mongoose.connect(process.env.MONGO_URI);
     console.log("✅ MongoDB connected");
   } catch (err) {
-    console.error(err);
+    console.error("❌ MongoDB connection error:", err);
     process.exit(1);
   }
 };
 
-// Dữ liệu mẫu
 const brands = [
   { name: "Sony", slug: "sony" },
   { name: "Microsoft", slug: "microsoft" },
@@ -143,7 +142,6 @@ const products = [
   },
 ];
 
-// Ảnh mặc định cho tất cả sản phẩm
 const defaultImage = [
   "https://upload.wikimedia.org/wikipedia/commons/thumb/7/71/Sony-PlayStation-4-PS4-wDualShock-4.jpg/500px-Sony-PlayStation-4-PS4-wDualShock-4.jpg",
 ];
@@ -152,41 +150,49 @@ const importData = async () => {
   try {
     await connectDB();
 
-    // Xoá dữ liệu cũ
+    // 1. Xoá dữ liệu cũ
     await Brand.deleteMany();
     await Category.deleteMany();
     await Product.deleteMany();
+    console.log("🗑️ Old data cleared");
 
-    // Tạo brand & category
+    // 2. Tạo brand & category
     const createdBrands = await Brand.insertMany(brands);
     const createdCategories = await Category.insertMany(categories);
 
-    // Tạo map brand/category id
+    // 3. Tạo Map để tìm ID nhanh hơn
     const brandMap = {};
     createdBrands.forEach((b) => (brandMap[b.name] = b._id));
 
     const categoryMap = {};
     createdCategories.forEach((c) => (categoryMap[c.name] = c._id));
 
-    // Gán brand/category và ảnh mặc định cho product
+    // 4. Gán brand/category thông minh hơn
     const productsWithRef = products.map((p) => {
-      let categoryId =
-        categoryMap[
-          p.type === "console"
-            ? "Console"
-            : p.type === "accessory"
-            ? "Accessory"
-            : "Game"
-        ];
+      const nameLower = p.name.toLowerCase();
+      const descLower = p.description.toLowerCase();
 
-      let brandId =
-        brandMap[
-          p.name.toLowerCase().includes("playstation")
-            ? "Sony"
-            : p.name.toLowerCase().includes("xbox")
-            ? "Microsoft"
-            : "Nintendo"
-        ];
+      // Mapping Category
+      let categoryId = categoryMap["Game"]; // Mặc định
+      if (p.type === "console") categoryId = categoryMap["Console"];
+      if (p.type === "accessory") categoryId = categoryMap["Accessory"];
+
+      // Mapping Brand dựa trên tên hoặc mô tả
+      let brandId = brandMap["Nintendo"]; // Mặc định
+      if (
+        nameLower.includes("playstation") ||
+        nameLower.includes("dualsense") ||
+        descLower.includes("sony") ||
+        descLower.includes("ps5") ||
+        descLower.includes("ps4")
+      ) {
+        brandId = brandMap["Sony"];
+      } else if (
+        nameLower.includes("xbox") ||
+        descLower.includes("microsoft")
+      ) {
+        brandId = brandMap["Microsoft"];
+      }
 
       return {
         ...p,
@@ -196,12 +202,13 @@ const importData = async () => {
       };
     });
 
+    // 5. Lưu vào Database
     await Product.insertMany(productsWithRef);
 
-    console.log("✅ Data imported successfully");
+    console.log("✅ Data imported successfully!");
     process.exit();
   } catch (err) {
-    console.error(err);
+    console.error("❌ Error importing data:", err);
     process.exit(1);
   }
 };

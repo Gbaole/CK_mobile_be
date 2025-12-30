@@ -38,6 +38,24 @@ class ProductController extends BaseController {
       ResponseHandler.error(res, err.message);
     }
   };
+
+  getProductDetail = async (req, res) => {
+    try {
+      const { id } = req.params;
+      const data = await productService.getProductDetail(id);
+      ResponseHandler.success(res, data, "Product detail");
+    } catch (err) {
+      ResponseHandler.error(res, err.message);
+    }
+  };
+  getAllProducts = async (req, res) => {
+    try {
+      const data = await productService.getAllProducts(10);
+      ResponseHandler.success(res, data, "All products");
+    } catch (err) {
+      ResponseHandler.error(res, err.message);
+    }
+  };
 }
 
 export default new ProductController();

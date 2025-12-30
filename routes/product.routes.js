@@ -7,23 +7,22 @@ import {
 
 const productRouter = express.Router();
 
-// CRUD cơ bản
 productRouter.post(
   "/",
   authenticationMiddleware,
   authorize("admin"),
   productController.create,
 );
-productRouter.get("/", productController.getAll);
+productRouter.get("/", productController.getAllProducts);
 
 productRouter.get("/top-selling", productController.getTopSelling);
 productRouter.get("/new-products", productController.getNewProducts);
-productRouter.get(
-  "/category/:categoryId",
-  productController.getProductsByCategory,
-);
+// productRouter.get(
+//   "/category/:categoryId",
+//   productController.getProductsByCategory,
+// );
 
-productRouter.get("/:id", productController.getById);
+productRouter.get("/:id", productController.getProductDetail);
 productRouter.put("/:id", productController.updateById);
 productRouter.delete("/:id", productController.deleteById);
 

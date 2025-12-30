@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-import { OrderStatus, PaymentMethod } from "../enums/order.enum";
+import { OrderStatus, PaymentMethod } from "../enums/order.enum.js";
 
 const orderSchema = new mongoose.Schema(
   {

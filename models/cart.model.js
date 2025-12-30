@@ -2,7 +2,7 @@
 import mongoose from "mongoose";
 
 const cartItemSchema = new mongoose.Schema({
-  product: {
+  productId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "Product",
     required: true,
@@ -13,11 +13,22 @@ const cartItemSchema = new mongoose.Schema({
     min: [1, "Số lượng không được ít hơn 1"],
     default: 1,
   },
+  name: {
+    type: String,
+    required: true,
+    trim: true,
+  },
+  price: {
+    type: Number,
+    required: true,
+    min: [0, "Giá không được nhỏ hơn 0"],
+    default: 0,
+  },
 });
 
 const cartSchema = new mongoose.Schema(
   {
-    user: {
+    userId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
       required: true,
@@ -29,7 +40,7 @@ const cartSchema = new mongoose.Schema(
       default: 0,
     },
   },
-  { timestamps: true }
+  { timestamps: true },
 );
 
 const Cart = mongoose.models.Cart || mongoose.model("Cart", cartSchema);
