@@ -1,7 +1,7 @@
 # @import ./varInit.http
 
-@productId=6954187d478854392e9c9bf6
-@quantity=2
+@productId=6954187d478854392e9c9bfa
+@quantity=10
 
 ###
 
@@ -19,7 +19,7 @@ Content-Type: application/json
 }   
 
 ###
-PATCH {{host}}/cart
+PATCH {{host}}/cart/update-quantity
 Authorization: Bearer {{token}}
 Content-Type: application/json
 
