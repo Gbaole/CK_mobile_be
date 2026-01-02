@@ -17,6 +17,7 @@ class AccountMapper {
       id: model._id.toString(),
       name: model.name,
       avatarURL: model.avatarURL,
+      shippingAddress: model.shippingAddress,
       email: model.email,
       phoneNumber: model.phoneNumber,
       status: model.status,

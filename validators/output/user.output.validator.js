@@ -10,6 +10,7 @@ export const UserSchema = z.object({
   id: objectIdSchema,
   name: z.string().min(1),
   avatarURL: z.string().nullable().default(null),
+  shippingAddress: z.string().min(1),
   email: z.string().email("Invalid email format"),
   phoneNumber: z.string().nullable().default(null),
   password: z.string().optional(),
