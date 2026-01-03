@@ -19,12 +19,18 @@ class OrderService {
     if (!cart || cart.items.length === 0) throw new Error("Cart is empty");
     const user = await UserReposiotry.findById(userId);
 
-    return await OrderRepository.create({
+    const order = await OrderRepository.create({
       userId: user._id,
       items: cart.items,
       shippingAddress: shippingAddress,
       totalPrice: cart.totalPrice,
     });
+    cart.items = [];
+    cart.totalPrice = 0;
+
+    await cart.save();
+
+    return order;
   }
 }
 
