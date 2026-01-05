@@ -23,10 +23,22 @@ export const UpdateProfileInputSchema = z
     phoneNumber: z
       .string()
       .trim()
+      .min(9, "Số điện thoại phải từ 9 - 12 số")
+      .max(12, "Số điện thoại phải từ 9 - 12 số")
       .regex(
         /^(0|\+84)[3|5|7|8|9][0-9]{8}$/,
-        "Số điện thoại không đúng định dạng Việt Nam",
+        "Số điện thoại không đúng định dạng Việt Nam"
       )
+      .optional(),
+    email: z
+      .string()
+      .trim()
+      .email({ message: "Email không đúng định dạng" })
+      .optional(),
+    shippingAddress: z
+      .string()
+      .trim()
+      .min(9, "Địa chỉ không được ngắn quá")
       .optional(),
   })
   .strict();

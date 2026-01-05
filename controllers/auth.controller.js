@@ -7,16 +7,16 @@ class AuthController extends BaseController {
     super(AuthService);
   }
 
-  // Hiển thị tất cả danh mục
   createNewAccount = async (req, res) => {
     try {
       const data = await AuthService.createNewAccount(req.body);
-      ResponseHandler.success(res, data, "User created successfully");
+      ResponseHandler.success(res, data, "User created successfully", 201);
     } catch (err) {
       ResponseHandler.error(res, err.message);
       console.error(err);
     }
   };
+
   login = async (req, res) => {
     try {
       const data = await AuthService.login(req.body);
@@ -26,48 +26,43 @@ class AuthController extends BaseController {
       console.error(err);
     }
   };
-  async updateProfile(req, res, next) {
+
+  updateProfile = async (req, res) => {
     try {
       const userId = req.user.id;
       const updateData = req.body;
 
       const result = await AuthService.updateAccountByUserId(
         userId,
-        updateData,
+        updateData
       );
 
-      return res.status(200).json({
-        success: true,
-        message: "Cập nhật thông tin thành công",
-        data: result,
-      });
-    } catch (error) {
-      next(error);
+      ResponseHandler.success(res, result, "Cập nhật thông tin thành công");
+    } catch (err) {
+      ResponseHandler.error(res, err.message);
     }
-  }
-  async updateAvatar(req, res, next) {
+  };
+
+  updateAvatar = async (req, res) => {
     try {
       const userId = req.user.id;
       const file = req.file;
 
       if (!file) {
-        return res.status(400).json({
-          success: false,
-          message: "Vui lòng chọn ảnh đại diện để tải lên (key: 'avatar')",
-        });
+        return ResponseHandler.error(
+          res,
+          "Vui lòng chọn ảnh đại diện để tải lên (key: 'avatar')",
+          400
+        );
       }
 
       const result = await AuthService.updateUserAvatar(userId, file);
 
-      return res.status(200).json({
-        success: true,
-        message: "Cập nhật ảnh đại diện thành công",
-        data: result,
-      });
-    } catch (error) {
-      next(error);
+      ResponseHandler.success(res, result, "Cập nhật ảnh đại diện thành công");
+    } catch (err) {
+      ResponseHandler.error(res, err.message);
     }
-  }
+  };
 }
 
 export default new AuthController();

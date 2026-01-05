@@ -53,6 +53,7 @@ class AccountMapper {
       phoneNumber: model.phoneNumber,
       status: model.status,
       role: model.role,
+      shippingAddress: model.shippingAddress,
     });
   }
 
